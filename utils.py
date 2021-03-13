@@ -2,7 +2,7 @@ import scipy.sparse as sp
 import numpy as np, os, re, itertools, math
 
 
-def build_knowledge(training_instances, validate_instances):
+def build_knowledge(training_instances, validate_instances, test_instances):
     MAX_SEQ_LENGTH = 0
     item_freq_dict = {}
 
@@ -12,10 +12,11 @@ def build_knowledge(training_instances, validate_instances):
         if len(elements) - 1 > MAX_SEQ_LENGTH:
             MAX_SEQ_LENGTH = len(elements) - 1
 
-        if len(elements) == 3:
-            basket_seq = elements[1:]
-        else:
-            basket_seq = [elements[-1]]
+        # if len(elements) == 3:
+        #     basket_seq = elements[1:]
+        # else:
+        #     basket_seq = [elements[-1]]
+        basket_seq = elements[1:]
 
         for basket in basket_seq:
             item_list = re.split('[\\s]+', basket)
@@ -31,11 +32,32 @@ def build_knowledge(training_instances, validate_instances):
         if len(elements) - 1 > MAX_SEQ_LENGTH:
             MAX_SEQ_LENGTH = len(elements) - 1
 
-        label = int(elements[0])
-        if label != 1 and len(elements) == 3:
-            basket_seq = elements[1:]
-        else:
-            basket_seq = [elements[-1]]
+        # label = int(elements[0])
+        # if label != 1 and len(elements) == 3:
+        #     basket_seq = elements[1:]
+        # else:
+        #     basket_seq = [elements[-1]]
+        basket_seq = elements[1:]
+
+        for basket in basket_seq:
+            item_list = re.split('[\\s]+', basket)
+            for item_obs in item_list:
+                if item_obs not in item_freq_dict:
+                    item_freq_dict[item_obs] = 1
+                else:
+                    item_freq_dict[item_obs] += 1
+
+    for line in test_instances:
+        elements = line.split("|")
+
+        if len(elements) - 1 > MAX_SEQ_LENGTH:
+            MAX_SEQ_LENGTH = len(elements) - 1
+
+        # if len(elements) == 3:
+        #     basket_seq = elements[1:]
+        # else:
+        #     basket_seq = [elements[-1]]
+        basket_seq = elements[1:]
 
         for basket in basket_seq:
             item_list = re.split('[\\s]+', basket)

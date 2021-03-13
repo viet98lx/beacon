@@ -66,9 +66,9 @@ data_dir = config.data_dir
 output_dir = config.output_dir
 tensorboard_dir=config.tensorboard_dir
 
-training_file = data_dir + "/train.txt"
-validate_file = data_dir + "/validate.txt"
-testing_file = data_dir + "/test.txt"
+training_file = data_dir + "/train_lines.txt"
+validate_file = data_dir + "/validate_lines.txt"
+testing_file = data_dir + "/test_lines.txt"
 
 print("***************************************************************************************")
 print("Output Dir: " + output_dir)
@@ -97,7 +97,7 @@ print(" + Total testing sequences: ", nb_test)
 
 # Create dictionary
 print("@Build knowledge")
-MAX_SEQ_LENGTH, item_dict, rev_item_dict, item_probs = utils.build_knowledge(training_instances, validate_instances)
+MAX_SEQ_LENGTH, item_dict, rev_item_dict, item_probs = utils.build_knowledge(training_instances, validate_instances, test_instances)
 
 print("#Statistic")
 NB_ITEMS = len(item_dict)
