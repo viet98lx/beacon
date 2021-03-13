@@ -1,5 +1,5 @@
-## The implementation of Beacon in the "[Correlation-Sensitive Next-Basket Recommendation](https://www.ijcai.org/proceedings/2019/0389.pdf)" paper (IJCAI'19)
 
+## This is a copy project of Beacon in the "[Correlation-Sensitive Next-Basket Recommendation](https://www.ijcai.org/proceedings/2019/0389.pdf)" paper (IJCAI'19)
 
 1. Input format(s): Train/Validate/Test sets have the same format
 
@@ -33,4 +33,4 @@
 - Tensorflow == 1.14
 - scipy.sparse == 1.3.0
 
-@Please drop me an email (ductrong.le.2014 at smu.edu.sg) if you need any clarification. Thanks :+1:
+@Please drop an email (ductrong.le.2014 at smu.edu.sg) if you need any clarification. Thanks :+1:
