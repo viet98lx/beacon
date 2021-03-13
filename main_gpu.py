@@ -97,7 +97,7 @@ print(" + Total testing sequences: ", nb_test)
 
 # Create dictionary
 print("@Build knowledge")
-MAX_SEQ_LENGTH, item_dict, rev_item_dict, item_probs = utils.build_knowledge(training_instances, validate_instances, test_instances)
+MAX_SEQ_LENGTH, item_dict, rev_item_dict, item_probs = utils.build_knowledge(training_instances, validate_instances, testing_instances)
 
 print("#Statistic")
 NB_ITEMS = len(item_dict)
