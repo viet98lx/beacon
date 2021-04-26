@@ -12,11 +12,11 @@ def build_knowledge(training_instances, validate_instances, test_instances):
         if len(elements) - 1 > MAX_SEQ_LENGTH:
             MAX_SEQ_LENGTH = len(elements) - 1
 
-        # if len(elements) == 3:
-        #     basket_seq = elements[1:]
-        # else:
-        #     basket_seq = [elements[-1]]
-        basket_seq = elements[1:]
+        if len(elements) == 3:
+            basket_seq = elements[1:]
+        else:
+            basket_seq = [elements[-1]]
+        # basket_seq = elements[1:]
 
         for basket in basket_seq:
             item_list = re.split('[\\s]+', basket)
@@ -32,12 +32,12 @@ def build_knowledge(training_instances, validate_instances, test_instances):
         if len(elements) - 1 > MAX_SEQ_LENGTH:
             MAX_SEQ_LENGTH = len(elements) - 1
 
-        # label = int(elements[0])
-        # if label != 1 and len(elements) == 3:
-        #     basket_seq = elements[1:]
-        # else:
-        #     basket_seq = [elements[-1]]
-        basket_seq = elements[1:]
+        label = int(elements[0])
+        if len(elements) == 3:
+            basket_seq = elements[1:]
+        else:
+            basket_seq = [elements[-1]]
+        # basket_seq = elements[1:]
 
         for basket in basket_seq:
             item_list = re.split('[\\s]+', basket)
@@ -53,11 +53,11 @@ def build_knowledge(training_instances, validate_instances, test_instances):
         if len(elements) - 1 > MAX_SEQ_LENGTH:
             MAX_SEQ_LENGTH = len(elements) - 1
 
-        # if len(elements) == 3:
-        #     basket_seq = elements[1:]
-        # else:
-        #     basket_seq = [elements[-1]]
-        basket_seq = elements[1:]
+        if len(elements) == 3:
+            basket_seq = elements[1:]
+        else:
+            basket_seq = [elements[-1]]
+        # basket_seq = elements[1:]
 
         for basket in basket_seq:
             item_list = re.split('[\\s]+', basket)
