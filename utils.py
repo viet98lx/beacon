@@ -2,7 +2,7 @@ import scipy.sparse as sp
 import numpy as np, os, re, itertools, math
 
 
-def build_knowledge(training_instances, validate_instances, test_instances):
+def build_knowledge(training_instances, validate_instances):
     MAX_SEQ_LENGTH = 0
     item_freq_dict = {}
 
@@ -16,7 +16,6 @@ def build_knowledge(training_instances, validate_instances, test_instances):
             basket_seq = elements[1:]
         else:
             basket_seq = [elements[-1]]
-        # basket_seq = elements[1:]
 
         for basket in basket_seq:
             item_list = re.split('[\\s]+', basket)
@@ -33,31 +32,10 @@ def build_knowledge(training_instances, validate_instances, test_instances):
             MAX_SEQ_LENGTH = len(elements) - 1
 
         label = int(elements[0])
-        if len(elements) == 3:
+        if label != 1 and len(elements) == 3:
             basket_seq = elements[1:]
         else:
             basket_seq = [elements[-1]]
-        # basket_seq = elements[1:]
-
-        for basket in basket_seq:
-            item_list = re.split('[\\s]+', basket)
-            for item_obs in item_list:
-                if item_obs not in item_freq_dict:
-                    item_freq_dict[item_obs] = 1
-                else:
-                    item_freq_dict[item_obs] += 1
-
-    for line in test_instances:
-        elements = line.split("|")
-
-        if len(elements) - 1 > MAX_SEQ_LENGTH:
-            MAX_SEQ_LENGTH = len(elements) - 1
-
-        if len(elements) == 3:
-            basket_seq = elements[1:]
-        else:
-            basket_seq = [elements[-1]]
-        # basket_seq = elements[1:]
 
         for basket in basket_seq:
             item_list = re.split('[\\s]+', basket)
@@ -79,6 +57,7 @@ def build_knowledge(training_instances, validate_instances, test_instances):
 
     reversed_item_dict = dict(zip(item_dict.values(), item_dict.keys()))
     return MAX_SEQ_LENGTH, item_dict, reversed_item_dict, item_probs
+
 
 def build_sparse_adjacency_matrix_v2(training_instances, validate_instances, item_dict):
     NB_ITEMS = len(item_dict)
@@ -117,6 +96,7 @@ def build_sparse_adjacency_matrix_v2(training_instances, validate_instances, ite
 
     return create_sparse_matrix(pairs, NB_ITEMS)
 
+
 def add_tuple(t, pairs):
     assert len(t) == 2
     if t[0] != t[1]:
@@ -124,6 +104,7 @@ def add_tuple(t, pairs):
             pairs[t] = 1
         else:
             pairs[t] += 1
+
 
 def create_sparse_matrix(pairs, NB_ITEMS):
     row = [p[0] for p in pairs]
@@ -137,9 +118,10 @@ def create_sparse_matrix(pairs, NB_ITEMS):
 
     return sp.csc_matrix(adj_matrix, dtype="float32")
 
+
 def seq_batch_generator(raw_lines, item_dict, batch_size=32, is_train=True):
     total_batches = compute_total_batches(len(raw_lines), batch_size)
-    
+
     O = []
     S = []
     L = []
@@ -155,7 +137,7 @@ def seq_batch_generator(raw_lines, item_dict, batch_size=32, is_train=True):
         for line in lines:
             elements = line.split("|")
 
-            #label = float(elements[0])
+            # label = float(elements[0])
             bseq = elements[1:-1]
             tbasket = elements[-1]
 
@@ -188,6 +170,7 @@ def seq_batch_generator(raw_lines, item_dict, batch_size=32, is_train=True):
                 batch_id = 0
                 if not is_train:
                     break
+
 
 def create_binary_vector(item_list, item_dict):
     v = np.zeros(len(item_dict), dtype='int32')
@@ -240,8 +223,10 @@ def compute_total_batches(nb_intances, batch_size):
 def create_identity_matrix(nb_items):
     return sp.identity(nb_items, dtype="float32").tocsr()
 
+
 def create_zero_matrix(nb_items):
     return sp.csr_matrix((nb_items, nb_items), dtype="float32")
+
 
 def normalize_adj(adj_matrix):
     """Symmetrically normalize adjacency matrix."""
@@ -253,6 +238,7 @@ def normalize_adj(adj_matrix):
     normalized_matrix = adj_matrix.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt)
 
     return normalized_matrix.tocsr()
+
 
 def remove_diag(adj_matrix):
     new_adj_matrix = sp.csr_matrix(adj_matrix)
