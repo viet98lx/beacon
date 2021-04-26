@@ -48,7 +48,7 @@ for iterVal in config.__iter__():
 print("Tensorflow version: ", tf.__version__)
 print("---------------------------------------------------")
 
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = config.device_id
 
 # for reproducibility
@@ -64,11 +64,11 @@ gpu_config.log_device_placement = False
 
 data_dir = config.data_dir
 output_dir = config.output_dir
-tensorboard_dir=config.tensorboard_dir
+tensorboard_dir = config.tensorboard_dir
 
-training_file = data_dir + "/train_lines.txt"
-validate_file = data_dir + "/validate_lines.txt"
-testing_file = data_dir + "/test_lines.txt"
+training_file = data_dir + "/train.txt"
+validate_file = data_dir + "/validate.txt"
+testing_file = data_dir + "/test.txt"
 
 print("***************************************************************************************")
 print("Output Dir: " + output_dir)
@@ -97,7 +97,7 @@ print(" + Total testing sequences: ", nb_test)
 
 # Create dictionary
 print("@Build knowledge")
-MAX_SEQ_LENGTH, item_dict, rev_item_dict, item_probs = utils.build_knowledge(training_instances, validate_instances, testing_instances)
+MAX_SEQ_LENGTH, item_dict, rev_item_dict, item_probs = utils.build_knowledge(training_instances, validate_instances)
 
 print("#Statistic")
 NB_ITEMS = len(item_dict)
@@ -110,10 +110,9 @@ if matrix_type == 0:
     adj_matrix = utils.create_zero_matrix(NB_ITEMS)
 else:
     print("@Load the normalized adjacency matrix")
-    matrix_fpath = data_dir + "/adj_matrix/r_matrix_" + str(config.nb_hop)+ "w.npz"
+    matrix_fpath = data_dir + "/adj_matrix/r_matrix_" + str(config.nb_hop) + "w.npz"
     adj_matrix = sp.load_npz(matrix_fpath)
     print(" + Real adj_matrix has been loaded from" + matrix_fpath)
-
 
 print("@Compute #batches in train/validation/test")
 total_train_batches = utils.compute_total_batches(nb_train, config.batch_size)
@@ -132,11 +131,13 @@ if config.train_mode:
         train_generator = utils.seq_batch_generator(training_instances, item_dict, config.batch_size)
         validate_generator = utils.seq_batch_generator(validate_instances, item_dict, config.batch_size, False)
         test_generator = utils.seq_batch_generator(testing_instances, item_dict, config.batch_size, False)
-        
+
         # Initialize the network
         print(" + Initialize the network")
-        net = models.Beacon(sess, config.emb_dim, config.rnn_unit, config.alpha, MAX_SEQ_LENGTH, item_probs, adj_matrix, config.top_k, 
-                             config.batch_size, config.rnn_cell_type, config.dropout_rate, config.seed, config.learning_rate)
+        net = models.Beacon(sess, config.emb_dim, config.rnn_unit, config.alpha, MAX_SEQ_LENGTH, item_probs, adj_matrix,
+                            config.top_k,
+                            config.batch_size, config.rnn_cell_type, config.dropout_rate, config.seed,
+                            config.learning_rate)
 
         print(" + Initialize parameters")
         sess.run(tf.global_variables_initializer())
@@ -155,8 +156,10 @@ if config.prediction_mode or config.tune_mode:
     with tf.Session(config=gpu_config) as sess:
         print(" + Initialize the network")
 
-        net = models.Beacon(sess, config.emb_dim, config.rnn_unit, config.alpha, MAX_SEQ_LENGTH, item_probs, adj_matrix, config.top_k, 
-                        config.batch_size, config.rnn_cell_type, config.dropout_rate, config.seed, config.learning_rate)
+        net = models.Beacon(sess, config.emb_dim, config.rnn_unit, config.alpha, MAX_SEQ_LENGTH, item_probs, adj_matrix,
+                            config.top_k,
+                            config.batch_size, config.rnn_cell_type, config.dropout_rate, config.seed,
+                            config.learning_rate)
 
         print(" + Initialize parameters")
         sess.run(tf.global_variables_initializer())
@@ -174,7 +177,8 @@ if config.prediction_mode or config.tune_mode:
         if config.tune_mode:
             print("@Start tunning")
             validate_generator = utils.seq_batch_generator(validate_instances, item_dict, config.batch_size, False)
-            procedure.tune(net, validate_generator, total_validate_batches, config.display_step, output_dir + "/topN/val_recall.txt")
+            procedure.tune(net, validate_generator, total_validate_batches, config.display_step,
+                           output_dir + "/topN/val_recall.txt")
 
         # Testing
         # ==================================================
@@ -182,7 +186,7 @@ if config.prediction_mode or config.tune_mode:
             test_generator = utils.seq_batch_generator(testing_instances, item_dict, config.batch_size, False)
 
             print("@Start generating prediction")
-            procedure.generate_prediction(net, test_generator, total_test_batches, config.display_step, 
-                        rev_item_dict, output_dir + "/topN/prediction.txt")
-        
+            procedure.generate_prediction(net, test_generator, total_test_batches, config.display_step,
+                                          rev_item_dict, output_dir + "/topN/prediction.txt")
+
     tf.reset_default_graph()
