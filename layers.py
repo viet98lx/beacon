@@ -29,4 +29,3 @@ def get_last_right_output(full_output, max_length, actual_length, rnn_units):
     index = tf.range(0, batch_size) * max_length + (actual_length - 1)
     # Indexing
     return tf.gather(tf.reshape(full_output, [-1, rnn_units]), index)
-

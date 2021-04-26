@@ -21,10 +21,8 @@ SEED_VALUES = [2, 9, 15, 44, 50, 55, 58, 79, 85, 92]
 data_dir = config.data_dir
 output_dir = data_dir + "/adj_matrix"
 
-training_file = data_dir + "/train_lines.txt"
-validate_file = data_dir + "/validate_lines.txt"
-testing_file = data_dir + "/test_lines.txt"
-
+training_file = data_dir + "/train.txt"
+validate_file = data_dir + "/validate.txt"
 print("***************************************************************************************")
 print("Output Dir: " + output_dir)
 
@@ -32,7 +30,6 @@ print("@Create output directory")
 utils.create_folder(output_dir)
 
 # Load train, validate & test
-
 print("@Load train,validate&test data")
 training_instances = utils.read_file_as_lines(training_file)
 nb_train = len(training_instances)
@@ -42,13 +39,9 @@ validate_instances = utils.read_file_as_lines(validate_file)
 nb_validate = len(validate_instances)
 print(" + Total validating sequences: ", nb_validate)
 
-testing_instances = utils.read_file_as_lines(testing_file)
-nb_test = len(testing_instances)
-print(" + Total testing sequences: ", nb_test)
-
 # Create dictionary
 print("@Build knowledge")
-MAX_SEQ_LENGTH, item_dict, reversed_item_dict, _ = utils.build_knowledge(training_instances, validate_instances, testing_instances)
+MAX_SEQ_LENGTH, item_dict, reversed_item_dict, _ = utils.build_knowledge(training_instances, validate_instances)
 
 print("#Statistic")
 NB_ITEMS = len(item_dict)

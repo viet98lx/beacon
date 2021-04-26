@@ -6,7 +6,7 @@ import utils
 import time
 
 
-def train_network(sess, net, train_generator, validate_generator, nb_epoch, 
+def train_network(sess, net, train_generator, validate_generator, nb_epoch,
                   total_train_batches, total_validate_batches, display_step,
                   early_stopping_k, epsilon, tensorboard_dir, output_dir,
                   test_generator, total_test_batches):
@@ -34,7 +34,7 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
 
             train_recall += recall
             avg_train_recall = train_recall / (batch_id + 1)
-            
+
             # Write logs at every iteration
             if summary_writer is not None:
                 summary_writer.add_summary(summary, epoch * total_train_batches + batch_id)
@@ -47,13 +47,12 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
                 recall_sum.value.add(tag="Recalls/Train_Recall", simple_value=avg_train_recall)
                 summary_writer.add_summary(recall_sum, epoch * total_train_batches + batch_id)
 
-
             if batch_id % display_step == 0 or batch_id == total_train_batches - 1:
                 running_time = time.time() - start_time
-                print("Training | Epoch " + str(epoch) + " | " + str(batch_id + 1) + "/" + str(total_train_batches) 
-                    + " | Loss= " + "{:.8f}".format(avg_train_loss)  
-                    + " | Recall@"+ str(net.top_k) + " = " + "{:.8f}".format(avg_train_recall) 
-                    + " | Time={:.2f}".format(running_time) + "s")
+                print("Training | Epoch " + str(epoch) + " | " + str(batch_id + 1) + "/" + str(total_train_batches)
+                      + " | Loss= " + "{:.8f}".format(avg_train_loss)
+                      + " | Recall@" + str(net.top_k) + " = " + "{:.8f}".format(avg_train_recall)
+                      + " | Time={:.2f}".format(running_time) + "s")
 
             if batch_id >= total_train_batches - 1:
                 break
@@ -63,7 +62,7 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
         val_recall = 0.0
         for batch_id, data in validate_generator:
             loss, recall, summary = net.validate_batch(data['S'], data['L'], data['Y'])
-            
+
             val_loss += loss
             avg_val_loss = val_loss / (batch_id + 1)
 
@@ -83,10 +82,10 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
                 summary_writer.add_summary(recall_sum, epoch * total_validate_batches + batch_id)
 
             if batch_id % display_step == 0 or batch_id == total_validate_batches - 1:
-                print("Validating | Epoch " + str(epoch) + " | " + str(batch_id + 1) + "/" + str(total_validate_batches) 
-                    + " | Loss = " + "{:.8f}".format(avg_val_loss)
-                    + " | Recall@"+ str(net.top_k) + " = " + "{:.8f}".format(avg_val_recall))
-            
+                print("Validating | Epoch " + str(epoch) + " | " + str(batch_id + 1) + "/" + str(total_validate_batches)
+                      + " | Loss = " + "{:.8f}".format(avg_val_loss)
+                      + " | Recall@" + str(net.top_k) + " = " + "{:.8f}".format(avg_val_recall))
+
             if batch_id >= total_validate_batches - 1:
                 break
 
@@ -95,7 +94,7 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
         test_recall = 0.0
         for batch_id, data in test_generator:
             loss, recall, _ = net.validate_batch(data['S'], data['L'], data['Y'])
-            
+
             test_loss += loss
             avg_test_loss = test_loss / (batch_id + 1)
 
@@ -104,7 +103,7 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
 
             # Write logs at every iteration
             if summary_writer is not None:
-                #summary_writer.add_summary(summary, epoch * total_test_batches + batch_id)
+                # summary_writer.add_summary(summary, epoch * total_test_batches + batch_id)
 
                 loss_sum = tf.Summary()
                 loss_sum.value.add(tag="Losses/Test_Loss", simple_value=avg_test_loss)
@@ -115,15 +114,15 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
                 summary_writer.add_summary(recall_sum, epoch * total_test_batches + batch_id)
 
             if batch_id % display_step == 0 or batch_id == total_test_batches - 1:
-                print("Testing | Epoch " + str(epoch) + " | " + str(batch_id + 1) + "/" + str(total_test_batches) 
-                    + " | Loss = " + "{:.8f}".format(avg_test_loss)
-                    + " | Recall@"+ str(net.top_k) + " = " + "{:.8f}".format(avg_test_recall))
-            
+                print("Testing | Epoch " + str(epoch) + " | " + str(batch_id + 1) + "/" + str(total_test_batches)
+                      + " | Loss = " + "{:.8f}".format(avg_test_loss)
+                      + " | Recall@" + str(net.top_k) + " = " + "{:.8f}".format(avg_test_recall))
+
             if batch_id >= total_test_batches - 1:
                 break
 
         if summary_writer is not None:
-            I_B= net.get_item_bias()
+            I_B = net.get_item_bias()
             item_probs = net.item_probs
 
             I_B_corr = np.corrcoef(I_B, item_probs)
@@ -133,7 +132,7 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
 
         avg_val_loss = val_loss / total_validate_batches
         print("\n@ The validation's loss = " + str(avg_val_loss))
-        imprv_ratio = (val_best_performance[-1] - avg_val_loss)/val_best_performance[-1]
+        imprv_ratio = (val_best_performance[-1] - avg_val_loss) / val_best_performance[-1]
         if imprv_ratio > epsilon:
             print("# The validation's loss is improved from " + "{:.8f}".format(val_best_performance[-1]) + \
                   " to " + "{:.8f}".format(avg_val_loss))
@@ -153,13 +152,14 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
             print("# The training is early stopped at Epoch " + str(epoch))
             break
 
+
 def tune(net, data_generator, total_batches, display_step, output_file):
     f = open(output_file, "w")
     val_loss = 0.0
     val_recall = 0.0
     for batch_id, data in data_generator:
         loss, recall, _ = net.validate_batch(data['S'], data['L'], data['Y'])
-            
+
         val_loss += loss
         avg_val_loss = val_loss / (batch_id + 1)
 
@@ -169,7 +169,7 @@ def tune(net, data_generator, total_batches, display_step, output_file):
         # Write logs at every iteration
         if batch_id % display_step == 0 or batch_id == total_batches - 1:
             print(str(batch_id + 1) + "/" + str(total_batches) + " | Loss = " + "{:.8f}".format(avg_val_loss)
-                    + " | Recall@"+ str(net.top_k) + " = " + "{:.8f}".format(avg_val_recall))
+                  + " | Recall@" + str(net.top_k) + " = " + "{:.8f}".format(avg_val_recall))
 
         if batch_id >= total_batches - 1:
             break
