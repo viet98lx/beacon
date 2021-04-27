@@ -105,6 +105,19 @@ class Beacon(Model):
             print("-------------------- SUMMARY ----------------------")
             tf.summary.scalar("C_Basket", self.C_Basket)
 
+            # summarize 2 terms in basket encoder
+            tf.summary.histogram("X_mul_I_B",tf.sparse_tensor_dense_matmul(tf.sparse_reshape(self.bseq, shape=[-1, self.nb_items]),
+                                                               self.I_B_Diag))
+            tf.summary.histogram("Corr_term", self.relu_with_threshold(
+                tf.sparse_tensor_dense_matmul(tf.sparse_reshape(self.bseq, shape=[-1, self.nb_items]), self.A),
+                self.C_Basket))
+            before = tf.count_nonzero(
+                tf.sparse_tensor_dense_matmul(tf.sparse_reshape(self.bseq, shape=[-1, self.nb_items]), self.A))
+            after = tf.count_nonzero(self.relu_with_threshold(
+                tf.sparse_tensor_dense_matmul(tf.sparse_reshape(self.bseq, shape=[-1, self.nb_items]), self.A),
+                self.C_Basket))
+            tf.summary.scalar("Ratio_filter_threshold",
+                              tf.cast(after, dtype=tf.float32) / tf.cast(before, dtype=tf.float32))
             for grad, var in self.grads:
                 tf.summary.histogram(var.name, var)
                 tf.summary.histogram(var.name + '/grad', grad)
