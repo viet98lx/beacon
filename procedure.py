@@ -135,20 +135,22 @@ def train_network(sess, net, train_generator, validate_generator, nb_epoch,
 
         avg_val_loss = val_loss / total_validate_batches
         print("\n@ The validation's loss = " + str(avg_val_loss))
-        # imprv_ratio = (val_best_performance[-1] - avg_val_loss) / val_best_performance[-1]
-        imprv_ratio = (test_best_performance[-1] - avg_test_loss) / test_best_performance[-1]
+        imprv_ratio = (val_best_performance[-1] - avg_val_loss) / val_best_performance[-1]
+        # imprv_ratio = (test_best_performance[-1] - avg_test_loss) / test_best_performance[-1]
 
         # if imprv_ratio > epsilon :
-        if avg_test_recall > test_best_recall:
-            # print("# The validation's loss is improved from " + "{:.8f}".format(val_best_performance[-1]) + \
-            #       " to " + "{:.8f}".format(avg_val_loss))
-            # val_best_performance.append(avg_val_loss)
-            # val_best_recall = avg_val_recall
-            print("# The test's loss is improved from " + "{:.8f}".format(test_best_performance[-1]) + \
-                  " to " + "{:.8f}".format(avg_test_loss))
-            print("New test best recall: ", avg_test_recall)
-            test_best_performance.append(avg_test_loss)
-            test_best_recall = avg_test_recall
+        if avg_val_recall > val_best_recall:
+            print("# The validation's loss is improved from " + "{:.8f}".format(val_best_performance[-1]) + \
+                  " to " + "{:.8f}".format(avg_val_loss))
+            print("# The validation's avg recall is improved from " + "{:.8f}".format(val_best_recall) + \
+                  " to " + "{:.8f}".format(avg_val_recall))
+            val_best_performance.append(avg_val_loss)
+            val_best_recall = avg_val_recall
+            # print("# The test's loss is improved from " + "{:.8f}".format(test_best_performance[-1]) + \
+            #       " to " + "{:.8f}".format(avg_test_loss))
+            # print("New test best recall: ", avg_test_recall)
+            # test_best_performance.append(avg_test_loss)
+            # test_best_recall = avg_test_recall
             patience_cnt = 0
 
             save_dir = output_dir + "/epoch_" + str(epoch)
